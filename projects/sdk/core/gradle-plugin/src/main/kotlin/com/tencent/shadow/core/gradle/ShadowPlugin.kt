@@ -32,9 +32,14 @@ import com.tencent.shadow.core.transform.GradleTransformWrapper
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
-import org.gradle.api.*
+import org.gradle.api.Action
+import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.compile.JavaCompile
 import java.io.File
+import java.lang.reflect.Method
 import java.net.URLClassLoader
 import java.util.zip.ZipFile
 
@@ -245,6 +250,9 @@ class ShadowPlugin : Plugin<Project> {
                     val tempCL = URLClassLoader(arrayOf(jarPath.toURL()), contextClassLoader)
                     val binaryXmlParserClass =
                         tempCL.loadClass("com.android.tools.apk.analyzer.BinaryXmlParser")
+                    val methods: Array<Method> = binaryXmlParserClass.declaredMethods
+
+
                     val decodeXmlMethod = binaryXmlParserClass.getDeclaredMethod(
                         "decodeXml",
                         String::class.java,
@@ -400,7 +408,8 @@ class ShadowPlugin : Plugin<Project> {
     ) {
         val sdkDirectory = baseExtension.sdkDirectory
         val compileSdkVersion =
-            baseExtension.compileSdkVersion ?: throw IllegalStateException("compileSdkVersion获取失败")
+            baseExtension.compileSdkVersion
+                ?: throw IllegalStateException("compileSdkVersion获取失败")
         val androidJarPath = "platforms/${compileSdkVersion}/android.jar"
         val androidJar = File(sdkDirectory, androidJarPath)
 

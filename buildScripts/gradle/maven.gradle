@@ -455,15 +455,15 @@ publishing {
             properties.load(propertiesFile.newDataInputStream())
 
             if ("${properties.getProperty('gpr.local')}".equalsIgnoreCase('true')) {
-                def user = properties.getProperty('gpr.user')
-                def key = properties.getProperty('gpr.key')
+                def user = "admin"
+                def key = "mrgao"
                 maven {
                     name = "GitHubPackages"
                     credentials {
                         username = user
                         password = key
                     }
-                    url "https://maven.pkg.github.com/${user}/shadow"
+                    url "http://localhost:8081/repository/maven-public/"
                 }
 
                 useLocalCredential = true
